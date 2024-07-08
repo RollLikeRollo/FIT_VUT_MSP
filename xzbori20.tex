@@ -1,0 +1,1621 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+
+    \usepackage{iftex}
+    \ifPDFTeX
+        \usepackage[T1]{fontenc}
+        \IfFileExists{alphabeta.sty}{
+              \usepackage{alphabeta}
+          }{
+              \usepackage[mathletters]{ucs}
+              \usepackage[utf8x]{inputenc}
+          }
+    \else
+        \usepackage{fontspec}
+        \usepackage{unicode-math}
+    \fi
+
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage{array}     % table support for pandoc >= 2.11.3
+    \usepackage{calc}      % table minipage width calculation for pandoc >= 2.11.1
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+
+
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{xzbori20}
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.61,0.40,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.80,0.25,0.22}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.46,0.46,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.41,0.47,0.13}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.36,0.12}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.52,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{0.89,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{\string -\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb.
+    \makeatletter
+        \newbox\Wrappedcontinuationbox
+        \newbox\Wrappedvisiblespacebox
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}}
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}}
+        \newcommand*\Wrappedcontinuationindent {3ex }
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox}
+        % Take advantage of the already applied Pygments mark-up to insert
+        % potential linebreaks for TeX processing.
+        %        {, <, #, %, $, ' and ": go to next line.
+        %        _, }, ^, &, >, - and ~: stay at end of broken line.
+        % Use of \textquotesingle for straight quote.
+        \newcommand*\Wrappedbreaksatspecials {%
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}%
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}%
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}%
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}%
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}%
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}%
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}%
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}%
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}%
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}%
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}%
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}%
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}%
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}%
+        }
+        % Some characters . , ; ? ! / are not pygmentized.
+        % This macro makes them "active" and they will insert potential linebreaks
+        \newcommand*\Wrappedbreaksatpunct {%
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}%
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}%
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}%
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}%
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}%
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}%
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}%
+            \catcode`\.\active
+            \catcode`\,\active
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active
+            \lccode`\~`\~
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \hypertarget{projekt-do-msp-20222023}{%
+\subsubsection{Projekt do MSP 2022/2023}\label{projekt-do-msp-20222023}}
+
+\begin{itemize}
+\item
+  Jan Zbořil
+\item
+  xzbori20
+\item ~
+  \hypertarget{xzbori20stud.fit.vutbr.cz}{%
+  \subsection{xzbori20@stud.fit.vutbr.cz}\label{xzbori20stud.fit.vutbr.cz}}
+\end{itemize}
+
+    Pro práci si nejprve importujeme potřebné moduly a data. Data jsem si
+předem transformoval z excelu do \texttt{.csv}, který jsem importoval do
+pythonu pomocí knihovny Panda. Využívám těchto knihoven: -
+\texttt{matplotlib} - pro kreslení grafů - \texttt{numpy} - pro
+numerické operace - \texttt{pandas} - pro práci s datovou sadou a
+tabulkami - \texttt{scipy\ stats} - pro provádění statistických testů -
+\texttt{statsmodels} - pro lineární regresi
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{59}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} import knihoven}
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+\PY{k+kn}{from} \PY{n+nn}{scipy} \PY{k+kn}{import} \PY{n}{stats} \PY{k}{as} \PY{n}{st}
+\PY{k+kn}{import} \PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{api} \PY{k}{as} \PY{n+nn}{sm}
+
+\PY{c+c1}{\PYZsh{} inicializace datove say}
+\PY{n}{df1} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}csv}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset\PYZus{}1.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{df2} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}csv}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataset\PYZus{}2.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} ulozeni nazvu mest pro dalsi pouziti}
+\PY{n}{MESTA} \PY{o}{=} \PY{n}{df1}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{misto}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\PY{n}{MESTA}\PY{o}{.}\PY{n}{add}\PY{p}{(}\PY{n+nb}{str}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{)}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} vygeneruje tabulku pro dataset 1}
+\PY{c+c1}{\PYZsh{} print(df1.to\PYZus{}markdown())}
+\PY{c+c1}{\PYZsh{} print(df1)}
+
+\PY{c+c1}{\PYZsh{} pro zadny vystup}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+    \end{Verbatim}
+
+    \begin{longtable}[]{@{}rrrrrrl@{}}
+\toprule
+& pocet & zimni & letni & stridat & beznazoru & misto \\
+\midrule
+\endhead
+0 & 1327 & 510 & 352 & 257 & 208 & praha \\
+1 & 915 & 324 & 284 & 178 & 129 & brno \\
+2 & 681 & 302 & 185 & 124 & 70 & znojmo \\
+3 & 587 & 257 & 178 & 78 & 74 & tisnov \\
+4 & 284 & 147 & 87 & 44 & 6 & paseky \\
+5 & 176 & 66 & 58 & 33 & 19 & horni\_lomna \\
+6 & 215 & 87 & 65 & 31 & 32 & dolni\_vestonice \\
+7 & 23 & 7 & 12 & 6 & 4 & okoli \\
+\bottomrule
+\end{longtable}
+
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{uxfakol-1}{%
+\section{Úkol 1}\label{uxfakol-1}}
+
+Z nahraných dat jsem si vygeneroval graf ukazující počet odpovědí v
+jednotlivých městech.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{60}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{df11} \PY{o}{=} \PY{n}{df1}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{labels}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{pocet}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+\PY{n}{ax} \PY{o}{=} \PY{n}{df11}\PY{o}{.}\PY{n}{plot}\PY{o}{.}\PY{n}{bar}\PY{p}{(}\PY{n}{xlabel}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{misto}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{ylabel}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{pocet hlasu}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{title}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Průzkum střídání času}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}xticklabels}\PY{p}{(}\PY{n}{df1}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{misto}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{rotation}\PY{o}{=}\PY{l+m+mi}{45}\PY{p}{)}
+
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{xzbori20_files/xzbori20_5_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Pro posouzení stejného procentuálního zastoupení - tedy
+pravděpodobnosti, že obyvatelé podporují střídání časů, letní čas nebo
+zimní čas - použijeme testy hypotézy homogenity v kontingenční tabulce.
+Takový test lze také nazvat testem dobré shody nebo \(\chi^2\) test.
+
+    Pro provedení takového testu potřebujeme nejprve znát sumy řádků a
+sloupců. Následující kód tyto sumy počítá a navíc provádí různé další
+pomocné transformace
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{61}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{df11} \PY{o}{=} \PY{n}{df1}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{labels}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{misto}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+\PY{n}{df11}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{labels}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{pocet}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+
+\PY{n}{sum\PYZus{}rows} \PY{o}{=} \PY{n}{df11}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+\PY{n}{sum\PYZus{}cols} \PY{o}{=} \PY{n}{df11}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+
+\PY{k}{try}\PY{p}{:}
+    \PY{n}{df1}\PY{o}{.}\PY{n}{insert}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{df1}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sum\PYZus{}misto}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{sum\PYZus{}cols}\PY{p}{,} \PY{n}{allow\PYZus{}duplicates}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+    \PY{n}{df\PYZus{}temp} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{sum\PYZus{}rows}\PY{p}{)}
+\PY{k}{except}\PY{p}{:}
+    \PY{k}{pass}
+
+\PY{n}{df1}\PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{n}{columns}\PY{o}{=}\PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{pocet}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{pocet\PYZus{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{df1}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{labels}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{pocet\PYZus{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{df1}\PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{n}{index}\PY{o}{=}\PY{p}{\PYZob{}}\PY{n}{i}\PY{p}{:} \PY{n}{MESTA}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,}\PY{n+nb}{len}\PY{p}{(}\PY{n}{MESTA}\PY{p}{)}\PY{p}{)}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{df1} \PY{o}{=} \PY{n}{df1}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{df\PYZus{}temp}\PY{o}{.}\PY{n}{T}\PY{p}{,} \PY{n}{ignore\PYZus{}index}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+\PY{n}{df1}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{labels}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{misto}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{df1}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sum\PYZus{}misto}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{df1}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sum\PYZus{}misto}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{replace}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{nan}\PY{p}{,} \PY{n}{sum\PYZus{}cols}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\PY{n}{df1}\PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+m+mi}{0}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sum\PYZus{}cas}\PY{l+s+s1}{\PYZsq{}}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+
+\PY{n}{df\PYZus{}f} \PY{o}{=} \PY{n}{df1}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} print(df1.to\PYZus{}markdown())}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+/tmp/ipykernel\_28838/3414897264.py:16: FutureWarning: The frame.append method is
+deprecated and will be removed from pandas in a future version. Use
+pandas.concat instead.
+  df1 = df1.append(df\_temp.T, ignore\_index=False)
+    \end{Verbatim}
+
+    \begin{longtable}[]{@{}lrrrrr@{}}
+\toprule
+& zimni & letni & stridat & beznazoru & sum\_misto \\
+\midrule
+\endhead
+praha & 510 & 352 & 257 & 208 & 1327 \\
+brno & 324 & 284 & 178 & 129 & 915 \\
+znojmo & 302 & 185 & 124 & 70 & 681 \\
+tisnov & 257 & 178 & 78 & 74 & 587 \\
+paseky & 147 & 87 & 44 & 6 & 284 \\
+horni\_lomna & 66 & 58 & 33 & 19 & 176 \\
+dolni\_vestonice & 87 & 65 & 31 & 32 & 215 \\
+okoli & 7 & 12 & 6 & 4 & 29 \\
+sum\_cas & 1700 & 1221 & 751 & 542 & 4214 \\
+\bottomrule
+\end{longtable}
+
+    Pro testování jednotlivých hypotéz ze zadání datovou sadu transformuju
+na tabulku se dvěma sloupci - počet respodnentů, co preferuje daný čas;
+a počet respondetů, jež uvedli jinou odpověď. Tabulka také obsahuje
+sloupec a řádek sum. Následují řešení jednotlivých poúkolů.
+
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{a-v-mux11bstech-obcuxedch-a-v-okoluxed-studenta-8.-prux16fzkumux16f-je-stejnuxe9-procentuuxe1lnuxed-zastoupenuxed-obyvatel-co-preferujuxed-zimnuxed-ux10das.}{%
+\paragraph{a) V městech, obcích a v okolí studenta (8. průzkumů) je
+stejné procentuální zastoupení obyvatel, co preferují zimní
+čas.}\label{a-v-mux11bstech-obcuxedch-a-v-okoluxed-studenta-8.-prux16fzkumux16f-je-stejnuxe9-procentuuxe1lnuxed-zastoupenuxed-obyvatel-co-preferujuxed-zimnuxed-ux10das.}}
+
+\(\alpha = 0.05\),\\
+\(H_0\): V městech, obcích a v okolí studenta (8. průzkumů) je stejné
+procentuální zastoupení obyvatel, co preferují zimní čas.\\
+\(H_A\): V městech, obcích a v okolí studenta (8. průzkumů) je stejné
+procentuální zastoupení obyvatel, co NEpreferují zimní čas.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{62}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{df\PYZus{}z} \PY{o}{=} \PY{n}{df1}\PY{o}{.}\PY{n}{filter}\PY{p}{(}\PY{n}{items}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{zimni}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{insert}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{jiny}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{df1}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,} \PY{n}{allow\PYZus{}duplicates}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{insert}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sum\PYZus{}misto}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{df1}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{p}{[}\PY{l+m+mi}{4}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,} \PY{n}{allow\PYZus{}duplicates}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} print(df\PYZus{}z.to\PYZus{}markdown())}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{longtable}[]{@{}lrrr@{}}
+\toprule
+& zimni & jiny & sum\_misto \\
+\midrule
+\endhead
+praha & 510 & 817 & 1327 \\
+brno & 324 & 591 & 915 \\
+znojmo & 302 & 379 & 681 \\
+tisnov & 257 & 330 & 587 \\
+paseky & 147 & 137 & 284 \\
+horni\_lomna & 66 & 110 & 176 \\
+dolni\_vestonice & 87 & 128 & 215 \\
+okoli & 7 & 22 & 29 \\
+0 & 1700 & 2514 & 4214 \\
+\bottomrule
+\end{longtable}
+
+    Z tabulky odpovědí vypočítám tabulku procent pomocí vzorce
+\[{{ x_{i,j} } \over {\sum_i{x_i}}} * 100\], kde \(\sum_i{x_i}\) je v
+tabulce vyjádřen sloupcem \texttt{sum\_misto}. Správnost dokazuje fakt,
+že sloupec pro sumu obsahuje v tabulce procent pouze hodnoty 100.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{63}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{dfzPerc}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{p}{,} \PY{n}{to\PYZus{}print}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}\PY{p}{:}
+    \PY{n}{N} \PY{o}{=} \PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{at}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sum\PYZus{}cas}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sum\PYZus{}misto}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+
+    \PY{n}{df\PYZus{}z\PYZus{}perc} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{data}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{p}{(}\PY{l+m+mi}{9}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{p}{,} \PY{n}{columns}\PY{o}{=}\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{columns}\PY{p}{)}
+    \PY{n}{df\PYZus{}z\PYZus{}perc}\PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{n}{index}\PY{o}{=}\PY{p}{\PYZob{}}\PY{n}{i}\PY{p}{:} \PY{n}{MESTA}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,}\PY{n+nb}{len}\PY{p}{(}\PY{n}{MESTA}\PY{p}{)}\PY{p}{)}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+    \PY{n}{df\PYZus{}z\PYZus{}perc}\PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+m+mi}{8}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sum\PYZus{}cas}\PY{l+s+s1}{\PYZsq{}}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+
+    \PY{n}{suma} \PY{o}{=} \PY{l+m+mi}{0}
+    \PY{k}{try}\PY{p}{:}
+        \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{9}\PY{p}{)}\PY{p}{:}
+            \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{)}\PY{p}{:}
+                \PY{n}{df\PYZus{}z\PYZus{}perc}\PY{o}{.}\PY{n}{iat}\PY{p}{[}\PY{n}{i}\PY{p}{,}\PY{n}{j}\PY{p}{]} \PY{o}{=} \PY{p}{(} \PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{iat}\PY{p}{[}\PY{n}{i}\PY{p}{,}\PY{n}{j}\PY{p}{]} \PY{o}{/}  \PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{iat}\PY{p}{[}\PY{n}{i}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{]} \PY{p}{)} \PY{o}{*} \PY{l+m+mi}{100}
+                \PY{n}{suma} \PY{o}{=} \PY{n}{suma} \PY{o}{+} \PY{n}{df\PYZus{}z\PYZus{}perc}\PY{o}{.}\PY{n}{iat}\PY{p}{[}\PY{n}{i}\PY{p}{,}\PY{n}{j}\PY{p}{]}
+
+            \PY{n}{df\PYZus{}z\PYZus{}perc}\PY{o}{.}\PY{n}{iat}\PY{p}{[}\PY{n}{i}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{]} \PY{o}{=} \PY{n}{suma}
+            \PY{n}{suma} \PY{o}{=} \PY{l+m+mi}{0}
+    \PY{k}{except}\PY{p}{:}
+        \PY{k}{pass}
+
+    \PY{k}{if} \PY{n}{to\PYZus{}print}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{dfz procenta:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{n}{df\PYZus{}z\PYZus{}perc}\PY{o}{.}\PY{n}{to\PYZus{}markdown}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{k}{return} \PY{n}{df\PYZus{}z\PYZus{}perc}
+
+\PY{n}{df\PYZus{}z\PYZus{}perc} \PY{o}{=} \PY{n}{dfzPerc}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Tabulka procent pro zimní/jiný čas:
+
+    \begin{longtable}[]{@{}lrrr@{}}
+\toprule
+& zimni & jiny & sum\_misto \\
+\midrule
+\endhead
+praha & 38.4326 & 61.5674 & 100 \\
+brno & 35.4098 & 64.5902 & 100 \\
+znojmo & 44.3465 & 55.6535 & 100 \\
+tisnov & 43.7819 & 56.2181 & 100 \\
+paseky & 51.7606 & 48.2394 & 100 \\
+horni\_lomna & 37.5 & 62.5 & 100 \\
+dolni\_vestonice & 40.4651 & 59.5349 & 100 \\
+okoli & 24.1379 & 75.8621 & 100 \\
+sum\_cas & 40.3417 & 59.6583 & 100 \\
+\bottomrule
+\end{longtable}
+
+    S pomocí tabulky procent jsem spočítal tabulku očekávaných četností.
+Požil jsem následující vzorec \[ m_{i,j} = {{n_i n_j} \over n}  \]
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{64}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{ocekavaneDfz}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{p}{,} \PY{n}{df\PYZus{}z\PYZus{}perc}\PY{p}{,} \PY{n}{to\PYZus{}print}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}\PY{p}{:}
+    \PY{n}{dfm\PYZus{}z} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{data}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{p}{,} \PY{n}{columns}\PY{o}{=}\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{columns}\PY{p}{)}
+    \PY{n}{dfm\PYZus{}z}\PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{n}{index}\PY{o}{=}\PY{p}{\PYZob{}}\PY{n}{i}\PY{p}{:} \PY{n}{MESTA}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,}\PY{n+nb}{len}\PY{p}{(}\PY{n}{MESTA}\PY{p}{)}\PY{p}{)}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+    \PY{n}{dfm\PYZus{}z}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{labels}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sum\PYZus{}misto}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+
+    \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,}\PY{n+nb}{len}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{index}\PY{p}{)}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{:}
+        \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,}\PY{n+nb}{len}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{:}
+            \PY{n}{dfm\PYZus{}z}\PY{o}{.}\PY{n}{iat}\PY{p}{[}\PY{n}{i}\PY{p}{,}\PY{n}{j}\PY{p}{]} \PY{o}{=} \PY{p}{(}\PY{n}{df\PYZus{}z\PYZus{}perc}\PY{o}{.}\PY{n}{iat}\PY{p}{[}\PY{n+nb}{len}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{index}\PY{p}{)}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{,}\PY{n}{j}\PY{p}{]} \PY{o}{/} \PY{l+m+mi}{100}\PY{p}{)} \PY{o}{*} \PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{iat}\PY{p}{[}\PY{n}{i}\PY{p}{,}\PY{n+nb}{len}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}
+         
+    \PY{k}{if} \PY{n}{to\PYZus{}print}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ocekavane (m) dfm\PYZus{}z}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{n}{dfm\PYZus{}z}\PY{o}{.}\PY{n}{to\PYZus{}markdown}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+    \PY{k}{return} \PY{n}{dfm\PYZus{}z}
+
+\PY{n}{dfm\PYZus{}z} \PY{o}{=} \PY{n}{ocekavaneDfz}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{p}{,} \PY{n}{df\PYZus{}z\PYZus{}perc}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Tabulka očekávaných četností \(m_{i,j}\):
+
+    \begin{longtable}[]{@{}lrr@{}}
+\toprule
+& zimni & jiny \\
+\midrule
+\endhead
+praha & 535.335 & 791.665 \\
+brno & 369.127 & 545.873 \\
+znojmo & 274.727 & 406.273 \\
+tisnov & 236.806 & 350.194 \\
+paseky & 114.57 & 169.43 \\
+horni\_lomna & 71.0014 & 104.999 \\
+dolni\_vestonice & 86.7347 & 128.265 \\
+okoli & 11.6991 & 17.3009 \\
+\bottomrule
+\end{longtable}
+
+    Pro otestování hypotézy \(H_0\) jsem vyžil testu dobré shody, pro nějž
+je potřeba spočítat hodnotu \(\chi^2\) následujícím vzorcem.
+\[  \chi^2 = \sum_{i=1}^{R}\sum_{j=1}^{S} {{( n_{i,j} - m_{i,j})^2} \over {m_{i,j}}} \]
+
+Doplněk kritického oboru je \textless{} 0 ; \(\chi^2_{0.95}(v) >\) , kde
+\(v = (r-1) * (s-1)\) představuje počet stupňů volnosti, kde \(s\) je
+počet sloupců tabulky a \(r\) je počet řádků v tabulce. Pokud hodnota
+\(\chi^2\) náleží kritickému oboru, pak hypotézu \(H_0\) nezamítám,
+jinak hypotézu \(H_0\) zamítám na hladině významnosti \(\alpha\) a platí
+alternativní hypotéza.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{65}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{chiCalc}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{p}{,} \PY{n}{dfm\PYZus{}z}\PY{p}{)}\PY{p}{:}
+    \PY{n}{chi\PYZus{}z} \PY{o}{=} \PY{l+m+mi}{0}
+    \PY{n}{alpha} \PY{o}{=} \PY{l+m+mf}{0.05}
+    \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{dfm\PYZus{}z}\PY{o}{.}\PY{n}{index}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+        \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{dfm\PYZus{}z}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+            \PY{n}{chi\PYZus{}z} \PY{o}{=} \PY{n}{chi\PYZus{}z} \PY{o}{+} \PY{p}{(}\PY{p}{(}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{iat}\PY{p}{[}\PY{n}{i}\PY{p}{,}\PY{n}{j}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{n}{dfm\PYZus{}z}\PY{o}{.}\PY{n}{iat}\PY{p}{[}\PY{n}{i}\PY{p}{,}\PY{n}{j}\PY{p}{]}\PY{p}{)} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)} \PY{o}{/} \PY{n}{dfm\PYZus{}z}\PY{o}{.}\PY{n}{iat}\PY{p}{[}\PY{n}{i}\PY{p}{,}\PY{n}{j}\PY{p}{]}\PY{p}{)}
+
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{CHI\PYZca{}2 = }\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s2}{, stupne volnosti = }\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{chi\PYZus{}z}\PY{p}{,} \PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{dfm\PYZus{}z}\PY{o}{.}\PY{n}{index}\PY{p}{)}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}\PY{o}{*}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{dfm\PYZus{}z}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+
+    \PY{n}{critical\PYZus{}value} \PY{o}{=} \PY{n}{st}\PY{o}{.}\PY{n}{chi2}\PY{o}{.}\PY{n}{ppf}\PY{p}{(}\PY{l+m+mi}{1}\PY{o}{\PYZhy{}}\PY{n}{alpha}\PY{p}{,} \PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{dfm\PYZus{}z}\PY{o}{.}\PY{n}{index}\PY{p}{)}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}\PY{o}{*}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{dfm\PYZus{}z}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}
+
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Doplnek kritickeho oboru = \PYZlt{} 0 ; }\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s2}{ \PYZgt{}}\PY{l+s+s2}{\PYZdq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{critical\PYZus{}value}\PY{p}{)}\PY{p}{)}
+
+    \PY{k}{if} \PY{n}{chi\PYZus{}z} \PY{o}{\PYZgt{}} \PY{n}{critical\PYZus{}value}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{H0 zamitam}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{k}{else}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{H0 nezamitam}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        
+\PY{n}{chiCalc}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{p}{,} \PY{n}{dfm\PYZus{}z}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+------------------
+CHI\^{}2 = 37.82410668971246, stupne volnosti = 7
+Doplnek kritickeho oboru = < 0 ; 14.067140449340169 >
+H0 zamitam
+------------------
+    \end{Verbatim}
+
+    Obdobně jako u příkladu a) postupujeme také v příkladech b) a c)
+
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{b-v-mux11bstech-obcuxedch-a-v-okoluxed-studenta-8.-prux16fzkumux16f-je-stejnuxe9-procentuuxe1lnuxed-zastoupenuxed-obyvatel-co-preferujuxed-letnuxed-ux10das.}{%
+\paragraph{b) V městech, obcích a v okolí studenta (8. průzkumů) je
+stejné procentuální zastoupení obyvatel, co preferují letní
+čas.}\label{b-v-mux11bstech-obcuxedch-a-v-okoluxed-studenta-8.-prux16fzkumux16f-je-stejnuxe9-procentuuxe1lnuxed-zastoupenuxed-obyvatel-co-preferujuxed-letnuxed-ux10das.}}
+
+\(\alpha = 0.05\),\\
+\(H_0\): V městech, obcích a v okolí studenta (8. průzkumů) je stejné
+procentuální zastoupení obyvatel, co preferují zimní čas.\\
+\(H_A\): V městech, obcích a v okolí studenta (8. průzkumů) je stejné
+procentuální zastoupení obyvatel, co NEpreferují letní čas.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{66}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{df\PYZus{}z} \PY{o}{=} \PY{n}{df1}\PY{o}{.}\PY{n}{filter}\PY{p}{(}\PY{n}{items}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{letni}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{insert}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{jiny}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{df1}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,} \PY{n}{allow\PYZus{}duplicates}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{insert}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sum\PYZus{}misto}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{df1}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{p}{[}\PY{l+m+mi}{4}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,} \PY{n}{allow\PYZus{}duplicates}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} print(df\PYZus{}z.to\PYZus{}markdown())}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{longtable}[]{@{}lrrr@{}}
+\toprule
+& letni & jiny & sum\_misto \\
+\midrule
+\endhead
+praha & 352 & 975 & 1327 \\
+brno & 284 & 631 & 915 \\
+znojmo & 185 & 496 & 681 \\
+tisnov & 178 & 409 & 587 \\
+paseky & 87 & 197 & 284 \\
+horni\_lomna & 58 & 118 & 176 \\
+dolni\_vestonice & 65 & 150 & 215 \\
+okoli & 12 & 17 & 29 \\
+sum\_cas & 1221 & 2993 & 4214 \\
+\bottomrule
+\end{longtable}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{67}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{df\PYZus{}z\PYZus{}perc} \PY{o}{=} \PY{n}{dfzPerc}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{p}{)}
+\PY{n}{dfm\PYZus{}z} \PY{o}{=} \PY{n}{ocekavaneDfz}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{p}{,} \PY{n}{df\PYZus{}z\PYZus{}perc}\PY{p}{)}
+\PY{n}{chiCalc}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{p}{,} \PY{n}{dfm\PYZus{}z}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+------------------
+CHI\^{}2 = 11.429528731041264, stupne volnosti = 7
+Doplnek kritickeho oboru = < 0 ; 14.067140449340169 >
+H0 nezamitam
+------------------
+    \end{Verbatim}
+
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{c-v-mux11bstech-obcuxedch-a-v-okoluxed-studenta-8.-prux16fzkumux16f-je-stejnuxe9-procentuuxe1lnuxed-zastoupenuxed-obyvatel-co-preferujuxed-stux159uxedduxe1nuxed-ux10dasu.}{%
+\paragraph{c) V městech, obcích a v okolí studenta (8. průzkumů) je
+stejné procentuální zastoupení obyvatel, co preferují střídání
+času.}\label{c-v-mux11bstech-obcuxedch-a-v-okoluxed-studenta-8.-prux16fzkumux16f-je-stejnuxe9-procentuuxe1lnuxed-zastoupenuxed-obyvatel-co-preferujuxed-stux159uxedduxe1nuxed-ux10dasu.}}
+
+\(\alpha = 0.05\),\\
+\(H_0\): V městech, obcích a v okolí studenta (8. průzkumů) je stejné
+procentuální zastoupení obyvatel, co preferují střídání času.\\
+\(H_A\): V městech, obcích a v okolí studenta (8. průzkumů) je stejné
+procentuální zastoupení obyvatel, co NEpreferují střídání času.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{68}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{df\PYZus{}z} \PY{o}{=} \PY{n}{df1}\PY{o}{.}\PY{n}{filter}\PY{p}{(}\PY{n}{items}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{stridat}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{insert}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{jiny}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{df1}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,} \PY{n}{allow\PYZus{}duplicates}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{insert}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sum\PYZus{}misto}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{df1}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{p}{[}\PY{l+m+mi}{4}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,} \PY{n}{allow\PYZus{}duplicates}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} print(df\PYZus{}z.to\PYZus{}markdown())}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{longtable}[]{@{}lrrr@{}}
+\toprule
+& stridat & jiny & sum\_misto \\
+\midrule
+\endhead
+praha & 257 & 1070 & 1327 \\
+brno & 178 & 737 & 915 \\
+znojmo & 124 & 557 & 681 \\
+tisnov & 78 & 509 & 587 \\
+paseky & 44 & 240 & 284 \\
+horni\_lomna & 33 & 143 & 176 \\
+dolni\_vestonice & 31 & 184 & 215 \\
+okoli & 6 & 23 & 29 \\
+sum\_cas & 751 & 3463 & 4214 \\
+\bottomrule
+\end{longtable}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{69}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{df\PYZus{}z\PYZus{}perc} \PY{o}{=} \PY{n}{dfzPerc}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{p}{)}
+\PY{n}{dfm\PYZus{}z} \PY{o}{=} \PY{n}{ocekavaneDfz}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{p}{,} \PY{n}{df\PYZus{}z\PYZus{}perc}\PY{p}{)}
+\PY{n}{chiCalc}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{p}{,} \PY{n}{dfm\PYZus{}z}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+------------------
+CHI\^{}2 = 15.153830811721116, stupne volnosti = 7
+Doplnek kritickeho oboru = < 0 ; 14.067140449340169 >
+H0 zamitam
+------------------
+    \end{Verbatim}
+
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+Pro příklad d) a e) je nutné vytvořit nové kategorie mšst - větší, menší
+a vesnice, a pracovat s nimi. Hodnoty nových kategorií vzniknou sečtením
+hodnot původních měst patřících do stejné kategorie. \#\#\#\# d) U
+větších měst, menších měst a obcí (3. průzkumy) je stejné procentuální
+zastoupení obyvatel, co preferují zimní čas.\\
+\(\alpha = 0.05\),\\
+\(H_0\): U větších měst, menších měst a obcí (3. průzkumy) je stejné
+procentuální zastoupení obyvatel, co preferují zimní čas.\\
+\(H_A\): U větších měst, menších měst a obcí (3. průzkumy) je stejné
+procentuální zastoupení obyvatel, co NEpreferují zimní čas.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{70}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{df\PYZus{}z} \PY{o}{=} \PY{n}{df1}\PY{o}{.}\PY{n}{filter}\PY{p}{(}\PY{n}{items}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{zimni}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{insert}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{jiny}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{df1}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,} \PY{n}{allow\PYZus{}duplicates}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{insert}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sum\PYZus{}misto}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{df1}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{p}{[}\PY{l+m+mi}{4}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,} \PY{n}{allow\PYZus{}duplicates}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+
+\PY{n}{vetsi} \PY{o}{=} \PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,}\PY{p}{:}\PY{p}{]}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+\PY{n}{mensi} \PY{o}{=} \PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{]}\PY{p}{,}\PY{p}{:}\PY{p}{]}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+\PY{n}{vesnice} \PY{o}{=} \PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{[}\PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{]}\PY{p}{,}\PY{p}{:}\PY{p}{]}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+\PY{n}{x} \PY{o}{=} \PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{[}\PY{l+m+mi}{8}\PY{p}{]}\PY{p}{,}\PY{p}{:}\PY{p}{]}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+
+\PY{n}{df\PYZus{}z} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{(}\PY{p}{[}\PY{n}{vetsi}\PY{p}{,} \PY{n}{mensi}\PY{p}{,} \PY{n}{vesnice}\PY{p}{,} \PY{n}{x}\PY{p}{]}\PY{p}{)}\PY{p}{,} \PY{n}{columns}\PY{o}{=}\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{columns}\PY{p}{)}
+\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{n}{index}\PY{o}{=}\PY{p}{\PYZob{}}\PY{l+m+mi}{0}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{vetsi}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{mensi}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{vesnice}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sum\PYZus{}cas}\PY{l+s+s1}{\PYZsq{}}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} print(df\PYZus{}z.to\PYZus{}markdown())}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{longtable}[]{@{}lrrr@{}}
+\toprule
+& zimni & jiny & sum\_misto \\
+\midrule
+\endhead
+vetsi & 834 & 1408 & 2242 \\
+mensi & 559 & 709 & 1268 \\
+vesnice & 300 & 375 & 675 \\
+sum\_cas & 1700 & 2514 & 4214 \\
+\bottomrule
+\end{longtable}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{71}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{dfzPerc2}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{p}{,} \PY{n}{toprint} \PY{o}{=} \PY{k+kc}{False}\PY{p}{)}\PY{p}{:}
+    \PY{n}{N} \PY{o}{=} \PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{at}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sum\PYZus{}cas}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sum\PYZus{}misto}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+
+    \PY{n}{df\PYZus{}z\PYZus{}perc} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{data}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{p}{(}\PY{l+m+mi}{4}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{p}{,} \PY{n}{columns}\PY{o}{=}\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{columns}\PY{p}{)}
+    \PY{n}{df\PYZus{}z\PYZus{}perc}\PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{n}{index}\PY{o}{=}\PY{p}{\PYZob{}}\PY{l+m+mi}{0}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{vetsi}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{mensi}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{vesnice}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sum\PYZus{}cas}\PY{l+s+s1}{\PYZsq{}}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+
+
+    \PY{n}{suma} \PY{o}{=} \PY{l+m+mi}{0}
+    \PY{k}{try}\PY{p}{:}
+        \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{4}\PY{p}{)}\PY{p}{:}
+            \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{)}\PY{p}{:}
+                \PY{n}{df\PYZus{}z\PYZus{}perc}\PY{o}{.}\PY{n}{iat}\PY{p}{[}\PY{n}{i}\PY{p}{,}\PY{n}{j}\PY{p}{]} \PY{o}{=} \PY{p}{(} \PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{iat}\PY{p}{[}\PY{n}{i}\PY{p}{,}\PY{n}{j}\PY{p}{]} \PY{o}{/}  \PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{iat}\PY{p}{[}\PY{n}{i}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{]} \PY{p}{)} \PY{o}{*} \PY{l+m+mi}{100}
+                \PY{n}{suma} \PY{o}{=} \PY{n}{suma} \PY{o}{+} \PY{n}{df\PYZus{}z\PYZus{}perc}\PY{o}{.}\PY{n}{iat}\PY{p}{[}\PY{n}{i}\PY{p}{,}\PY{n}{j}\PY{p}{]}
+
+            \PY{n}{df\PYZus{}z\PYZus{}perc}\PY{o}{.}\PY{n}{iat}\PY{p}{[}\PY{n}{i}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{]} \PY{o}{=} \PY{n}{suma}
+            \PY{n}{suma} \PY{o}{=} \PY{l+m+mi}{0}
+    \PY{k}{except}\PY{p}{:}
+        \PY{k}{pass}
+
+    \PY{k}{if} \PY{n}{toprint}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{dfz procenta:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{n}{df\PYZus{}z\PYZus{}perc}\PY{o}{.}\PY{n}{to\PYZus{}markdown}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{k}{return} \PY{n}{df\PYZus{}z\PYZus{}perc}
+
+\PY{k}{def} \PY{n+nf}{ocekavaneDfz2}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{p}{,} \PY{n}{df\PYZus{}z\PYZus{}perc}\PY{p}{,} \PY{n}{toprint} \PY{o}{=} \PY{k+kc}{False}\PY{p}{)}\PY{p}{:}
+    \PY{n}{dfm\PYZus{}z} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{data}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{p}{(}\PY{l+m+mi}{3}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{p}{,} \PY{n}{columns}\PY{o}{=}\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{columns}\PY{p}{)}
+    \PY{n}{dfm\PYZus{}z}\PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{n}{index}\PY{o}{=}\PY{p}{\PYZob{}}\PY{l+m+mi}{0}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{vetsi}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{mensi}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{vesnice}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{0}\PY{l+s+s1}{\PYZsq{}}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+    \PY{c+c1}{\PYZsh{} dfm.drop(labels=\PYZsq{}misto\PYZsq{}, axis=1, inplace=True)}
+    \PY{n}{dfm\PYZus{}z}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{labels}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sum\PYZus{}misto}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+
+    \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{)}\PY{p}{:}
+        \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{)}\PY{p}{:}
+            \PY{c+c1}{\PYZsh{} print(df\PYZus{}z\PYZus{}perc.iat[8,j] / 100 , df\PYZus{}z.iat[i,2] )}
+            \PY{n}{dfm\PYZus{}z}\PY{o}{.}\PY{n}{iat}\PY{p}{[}\PY{n}{i}\PY{p}{,}\PY{n}{j}\PY{p}{]} \PY{o}{=} \PY{p}{(}\PY{n}{df\PYZus{}z\PYZus{}perc}\PY{o}{.}\PY{n}{iat}\PY{p}{[}\PY{l+m+mi}{3}\PY{p}{,}\PY{n}{j}\PY{p}{]} \PY{o}{/} \PY{l+m+mi}{100}\PY{p}{)} \PY{o}{*} \PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{iat}\PY{p}{[}\PY{n}{i}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{]}
+      
+    \PY{k}{if} \PY{n}{toprint}\PY{p}{:}      
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ocekavane (m) dfm\PYZus{}z}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{n}{dfm\PYZus{}z}\PY{o}{.}\PY{n}{to\PYZus{}markdown}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{k}{return} \PY{n}{dfm\PYZus{}z}
+
+\PY{k}{def} \PY{n+nf}{chiCalc2}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{p}{,} \PY{n}{dfm\PYZus{}z}\PY{p}{)}\PY{p}{:}
+    \PY{n}{chi\PYZus{}z} \PY{o}{=} \PY{l+m+mi}{0}
+    \PY{n}{alpha} \PY{o}{=} \PY{l+m+mf}{0.05}
+    \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{)}\PY{p}{:}
+        \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{)}\PY{p}{:}
+            \PY{n}{chi\PYZus{}z} \PY{o}{=} \PY{n}{chi\PYZus{}z} \PY{o}{+} \PY{p}{(}\PY{p}{(}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{iat}\PY{p}{[}\PY{n}{i}\PY{p}{,}\PY{n}{j}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{n}{dfm\PYZus{}z}\PY{o}{.}\PY{n}{iat}\PY{p}{[}\PY{n}{i}\PY{p}{,}\PY{n}{j}\PY{p}{]}\PY{p}{)} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)} \PY{o}{/} \PY{n}{dfm\PYZus{}z}\PY{o}{.}\PY{n}{iat}\PY{p}{[}\PY{n}{i}\PY{p}{,}\PY{n}{j}\PY{p}{]}\PY{p}{)}
+
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{CHI\PYZca{}2 = }\PY{l+s+s2}{\PYZdq{}} \PY{p}{,} \PY{n}{chi\PYZus{}z}\PY{p}{,}\PY{p}{)}
+
+    \PY{n}{critical\PYZus{}value} \PY{o}{=} \PY{n}{st}\PY{o}{.}\PY{n}{chi2}\PY{o}{.}\PY{n}{ppf}\PY{p}{(}\PY{l+m+mi}{1}\PY{o}{\PYZhy{}}\PY{n}{alpha}\PY{p}{,} \PY{n}{df}\PY{o}{=}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{dfm\PYZus{}z}\PY{o}{.}\PY{n}{index}\PY{p}{)}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}\PY{o}{*}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{dfm\PYZus{}z}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}
+
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Kriticka hodnota = }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{critical\PYZus{}value}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{, stupne volnosti = }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{dfm\PYZus{}z}\PY{o}{.}\PY{n}{index}\PY{p}{)}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}\PY{o}{*}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{dfm\PYZus{}z}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}
+
+    \PY{k}{if} \PY{n}{chi\PYZus{}z} \PY{o}{\PYZgt{}} \PY{n}{critical\PYZus{}value}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{H0 zamitam}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{k}{else}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{H0 nezamitam}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n}{df\PYZus{}z\PYZus{}perc} \PY{o}{=} \PY{n}{dfzPerc2}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{p}{,} \PY{k+kc}{False}\PY{p}{)}
+\PY{n}{dfm\PYZus{}z} \PY{o}{=} \PY{n}{ocekavaneDfz2}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{p}{,} \PY{n}{df\PYZus{}z\PYZus{}perc}\PY{p}{,} \PY{k+kc}{False}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Tabulka procent:
+
+    \begin{longtable}[]{@{}lrrr@{}}
+\toprule
+& zimni & jiny & sum\_misto \\
+\midrule
+\endhead
+vetsi & 37.1989 & 62.8011 & 100 \\
+mensi & 44.0852 & 55.9148 & 100 \\
+vesnice & 44.4444 & 55.5556 & 100 \\
+sum\_cas & 40.3417 & 59.6583 & 100 \\
+\bottomrule
+\end{longtable}
+
+    Tabulka očekávaných četností \(m_{i,j}\)
+
+    \begin{longtable}[]{@{}lrr@{}}
+\toprule
+& zimni & jiny \\
+\midrule
+\endhead
+vetsi & 904.461 & 1337.54 \\
+mensi & 511.533 & 756.467 \\
+vesnice & 272.307 & 402.693 \\
+\bottomrule
+\end{longtable}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{72}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{chiCalc2}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{p}{,} \PY{n}{dfm\PYZus{}z}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+------------------
+CHI\^{}2 =  21.305122713194553
+Kriticka hodnota =  5.991464547107979 , stupne volnosti =  2
+H0 zamitam
+------------------
+    \end{Verbatim}
+
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{e-h_0-u-vux11btux161uxedch-mux11bst-menux161uxedch-mux11bst-a-obcuxed-3.-prux16fzkumy-je-stejnuxe9-procentuuxe1lnuxed-zastoupenuxed-nerozhodnutelnuxfdch-obyvatel.}{%
+\paragraph{\texorpdfstring{e) \(H_0\): U větších měst, menších měst a
+obcí (3. průzkumy) je stejné procentuální zastoupení nerozhodnutelných
+obyvatel.}{e) H\_0: U větších měst, menších měst a obcí (3. průzkumy) je stejné procentuální zastoupení nerozhodnutelných obyvatel.}}\label{e-h_0-u-vux11btux161uxedch-mux11bst-menux161uxedch-mux11bst-a-obcuxed-3.-prux16fzkumy-je-stejnuxe9-procentuuxe1lnuxed-zastoupenuxed-nerozhodnutelnuxfdch-obyvatel.}}
+
+\(\alpha = 0.05\)\\
+\(H_0\): U větších měst, menších měst a obcí (3. průzkumy) je stejné
+procentuální zastoupení nerozhodnutelných obyvatel\\
+\(H_A\): U větších měst, menších měst a obcí (3. průzkumy) NENÍ stejné
+procentuální zastoupení nerozhodnutelných obyvatel
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{73}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{df\PYZus{}z} \PY{o}{=} \PY{n}{df1}\PY{o}{.}\PY{n}{filter}\PY{p}{(}\PY{n}{items}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{beznazoru}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{insert}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{jiny}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{df1}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,} \PY{n}{allow\PYZus{}duplicates}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{insert}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sum\PYZus{}misto}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{df1}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{p}{[}\PY{l+m+mi}{4}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,} \PY{n}{allow\PYZus{}duplicates}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+
+
+\PY{n}{vetsi} \PY{o}{=} \PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,}\PY{p}{:}\PY{p}{]}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+\PY{n}{mensi} \PY{o}{=} \PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{]}\PY{p}{,}\PY{p}{:}\PY{p}{]}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+\PY{n}{vesnice} \PY{o}{=} \PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{[}\PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{]}\PY{p}{,}\PY{p}{:}\PY{p}{]}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+\PY{n}{x} \PY{o}{=} \PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{[}\PY{l+m+mi}{8}\PY{p}{]}\PY{p}{,}\PY{p}{:}\PY{p}{]}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+
+\PY{n}{df\PYZus{}z} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{(}\PY{p}{[}\PY{n}{vetsi}\PY{p}{,} \PY{n}{mensi}\PY{p}{,} \PY{n}{vesnice}\PY{p}{,} \PY{n}{x}\PY{p}{]}\PY{p}{)}\PY{p}{,} \PY{n}{columns}\PY{o}{=}\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{columns}\PY{p}{)}
+\PY{n}{df\PYZus{}z}\PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{n}{index}\PY{o}{=}\PY{p}{\PYZob{}}\PY{l+m+mi}{0}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{vetsi}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{mensi}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{vesnice}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sum\PYZus{}cas}\PY{l+s+s1}{\PYZsq{}}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} print(df\PYZus{}z.to\PYZus{}markdown())}
+
+\PY{n}{df\PYZus{}z\PYZus{}perc} \PY{o}{=} \PY{n}{dfzPerc2}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{p}{)}
+\PY{n}{dfm\PYZus{}z} \PY{o}{=} \PY{n}{ocekavaneDfz2}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{p}{,} \PY{n}{df\PYZus{}z\PYZus{}perc}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Tabulka četností:
+
+    \begin{longtable}[]{@{}lrrr@{}}
+\toprule
+& beznazoru & jiny & sum\_misto \\
+\midrule
+\endhead
+vetsi & 337 & 1905 & 2242 \\
+mensi & 144 & 1124 & 1268 \\
+vesnice & 57 & 618 & 675 \\
+sum\_cas & 542 & 3672 & 4214 \\
+\bottomrule
+\end{longtable}
+
+    Tabulka četností v procentech:
+
+    \begin{longtable}[]{@{}lrrr@{}}
+\toprule
+& beznazoru & jiny & sum\_misto \\
+\midrule
+\endhead
+vetsi & 15.0312 & 84.9688 & 100 \\
+mensi & 11.3565 & 88.6435 & 100 \\
+vesnice & 8.44444 & 91.5556 & 100 \\
+sum\_cas & 12.8619 & 87.1381 & 100 \\
+\bottomrule
+\end{longtable}
+
+    Tabulka očekávanýc četností \(m_{i,j}\):
+
+    \begin{longtable}[]{@{}lrr@{}}
+\toprule
+& beznazoru & jiny \\
+\midrule
+\endhead
+vetsi & 288.364 & 1953.64 \\
+mensi & 163.089 & 1104.91 \\
+vesnice & 86.8178 & 588.182 \\
+\bottomrule
+\end{longtable}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{74}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{chiCalc2}\PY{p}{(}\PY{n}{df\PYZus{}z}\PY{p}{,} \PY{n}{dfm\PYZus{}z}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+------------------
+CHI\^{}2 =  23.73062762989995
+Kriticka hodnota =  5.991464547107979 , stupne volnosti =  2
+H0 zamitam
+------------------
+    \end{Verbatim}
+
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{f-na-zuxe1kladux11b-odpovux11bduxed-z-okoluxed-studenta-zkuste-urux10dit-z-dat-zda-student-provuxe1dux11bl-vuxfdzkum-ve-vux11btux161uxedm-mux11bstux11b-menux161uxedm-mux11bstux11b-nebo-v-obci.}{%
+\paragraph{f) Na základě odpovědí z okolí studenta zkuste určit z dat,
+zda student prováděl výzkum ve větším městě, menším městě nebo v
+obci.}\label{f-na-zuxe1kladux11b-odpovux11bduxed-z-okoluxed-studenta-zkuste-urux10dit-z-dat-zda-student-provuxe1dux11bl-vuxfdzkum-ve-vux11btux161uxedm-mux11bstux11b-menux161uxedm-mux11bstux11b-nebo-v-obci.}}
+
+Porovnejte výsledek se skutečností a okomentujte.\\
+Příklad jsem počítal pomocí párového T-testu.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{75}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{vetsi} \PY{o}{=} \PY{n}{df\PYZus{}f}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,}\PY{p}{:}\PY{p}{]}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+\PY{n}{mensi} \PY{o}{=} \PY{n}{df\PYZus{}f}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{]}\PY{p}{,}\PY{p}{:}\PY{p}{]}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+\PY{n}{vesnice} \PY{o}{=} \PY{n}{df\PYZus{}f}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{[}\PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{]}\PY{p}{,}\PY{p}{:}\PY{p}{]}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+\PY{n}{okoli} \PY{o}{=} \PY{n}{df\PYZus{}f}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{[}\PY{l+m+mi}{7}\PY{p}{]}\PY{p}{,}\PY{p}{:}\PY{p}{]}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+
+\PY{n}{df\PYZus{}fvet} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{(}\PY{p}{[}\PY{n}{vetsi}\PY{p}{,} \PY{n}{okoli}\PY{p}{]}\PY{p}{)}\PY{p}{,} \PY{n}{columns}\PY{o}{=}\PY{n}{df\PYZus{}f}\PY{o}{.}\PY{n}{columns}\PY{p}{)}
+\PY{n}{df\PYZus{}fmen} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{(}\PY{p}{[}\PY{n}{mensi}\PY{p}{,} \PY{n}{okoli}\PY{p}{]}\PY{p}{)}\PY{p}{,} \PY{n}{columns}\PY{o}{=}\PY{n}{df\PYZus{}f}\PY{o}{.}\PY{n}{columns}\PY{p}{)}
+\PY{n}{df\PYZus{}fves} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{(}\PY{p}{[}\PY{n}{vesnice}\PY{p}{,} \PY{n}{okoli}\PY{p}{]}\PY{p}{)}\PY{p}{,} \PY{n}{columns}\PY{o}{=}\PY{n}{df\PYZus{}f}\PY{o}{.}\PY{n}{columns}\PY{p}{)}
+
+\PY{n}{df\PYZus{}fvet}\PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{n}{index}\PY{o}{=}\PY{p}{\PYZob{}}\PY{l+m+mi}{0}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{vetsi}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{okoli}\PY{l+s+s1}{\PYZsq{}}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{df\PYZus{}fmen}\PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{n}{index}\PY{o}{=}\PY{p}{\PYZob{}}\PY{l+m+mi}{0}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{mensi}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{okoli}\PY{l+s+s1}{\PYZsq{}}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{df\PYZus{}fves}\PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{n}{index}\PY{o}{=}\PY{p}{\PYZob{}}\PY{l+m+mi}{0}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{vesnice}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{okoli}\PY{l+s+s1}{\PYZsq{}}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} for i in [df\PYZus{}fvet, df\PYZus{}fmen, df\PYZus{}fves]:}
+\PY{c+c1}{\PYZsh{}     i.loc[len(i.index)] = i.sum(axis=0)}
+\PY{c+c1}{\PYZsh{}     i.rename(index=\PYZob{}2: \PYZsq{}sum\PYZus{}cas\PYZsq{}\PYZcb{}, inplace=True)}
+\PY{c+c1}{\PYZsh{}     print(\PYZdq{}\PYZob{}\PYZcb{}: \PYZdq{}.format(i.columns[0]))}
+\PY{c+c1}{\PYZsh{}     print(i.to\PYZus{}markdown())}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Četnost ve větších městech a okolí: :
+
+    \begin{longtable}[]{@{}lrrrrr@{}}
+\toprule
+& zimni & letni & stridat & beznazoru & sum\_misto \\
+\midrule
+\endhead
+vetsi & 834 & 636 & 435 & 337 & 2242 \\
+okoli & 7 & 12 & 6 & 4 & 29 \\
+sum\_cas & 841 & 648 & 441 & 341 & 2271 \\
+\bottomrule
+\end{longtable}
+
+    Četnost v menších městech a okolí:
+
+    \begin{longtable}[]{@{}lrrrrr@{}}
+\toprule
+& zimni & letni & stridat & beznazoru & sum\_misto \\
+\midrule
+\endhead
+mensi & 559 & 363 & 202 & 144 & 1268 \\
+okoli & 7 & 12 & 6 & 4 & 29 \\
+sum\_cas & 566 & 375 & 208 & 148 & 1297 \\
+\bottomrule
+\end{longtable}
+
+    Četnost ve vesnicích a okolí:
+
+    \begin{longtable}[]{@{}lrrrrr@{}}
+\toprule
+& zimni & letni & stridat & beznazoru & sum\_misto \\
+\midrule
+\endhead
+vesnice & 300 & 210 & 108 & 57 & 675 \\
+okoli & 7 & 12 & 6 & 4 & 29 \\
+sum\_cas & 307 & 222 & 114 & 61 & 704 \\
+\bottomrule
+\end{longtable}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{76}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{p}{[}\PY{n}{df\PYZus{}fvet}\PY{p}{,} \PY{n}{df\PYZus{}fmen}\PY{p}{,} \PY{n}{df\PYZus{}fves}\PY{p}{]}\PY{p}{:}
+    \PY{n}{lokalita} \PY{o}{=} \PY{n}{i}\PY{o}{.}\PY{n}{values}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+    \PY{n}{okoli} \PY{o}{=} \PY{n}{i}\PY{o}{.}\PY{n}{values}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}
+    \PY{n}{t\PYZus{}test\PYZus{}rest} \PY{o}{=} \PY{n}{st}\PY{o}{.}\PY{n}{ttest\PYZus{}rel}\PY{p}{(}\PY{n}{lokalita}\PY{p}{,} \PY{n}{okoli}\PY{p}{,} \PY{n}{alternative}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{two\PYZhy{}sided}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{n}{i}\PY{o}{.}\PY{n}{index}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Statistika = }\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s2}{, P\PYZhy{}Hodnota = }\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s2}{ }\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{\PYZdq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{t\PYZus{}test\PYZus{}rest}\PY{o}{.}\PY{n}{statistic}\PY{p}{,} \PY{n}{t\PYZus{}test\PYZus{}rest}\PY{o}{.}\PY{n}{pvalue}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+vetsi
+Statistika = 2.5836536202800007, P-Hodnota = 0.06109140982819672
+
+mensi
+Statistika = 2.4889989206823886, P-Hodnota = 0.06755677625424947
+
+vesnice
+Statistika = 2.454121510787069, P-Hodnota = 0.0701334654846285
+
+    \end{Verbatim}
+
+    Po provedení párového T-testu ani jedna z P-hodnot není menší než
+\(\alpha = 0.05\), proto nemůžeme potvrdit, že platí \(H_0\), tedy že
+jsem prováděl výzkum vě větším/menším městě nebo na vesnici. Nejblíže se
+však hodnotě \(\alpha = 0.05\) blíží P-hodnota pro větší města. Svůj
+výzkum jsem ve skutečnosti prováděl částečně v Brně (větší město) a v
+Přerově (menší město, ale počtem obyvatel větší než Znojmo nebo Tišnov).
+Výsledky testu tedy celkem odpovídají realitě.
+
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{regrese}{%
+\section{2. Regrese}\label{regrese}}
+
+    \hypertarget{a-urux10dete-vhodnuxfd-model-pomocuxed-zpux11btnuxe9-metody-a-regresnuxed-diagnostiky.}{%
+\paragraph{a) Určete vhodný model pomocí zpětné metody a regresní
+diagnostiky.}\label{a-urux10dete-vhodnuxfd-model-pomocuxed-zpux11btnuxe9-metody-a-regresnuxed-diagnostiky.}}
+
+Pro výpočet vhodného modelu jsem použil metodu, kdy nejprve vypočítám
+regresní model se všemi parametry a následně odeberu z modelu ten
+parametr, pro který vyšla ve Studentově T-testu největší P-hodnota. Pro
+tento test jsem volil hypotézy:\\
+\(H_0\) parametr \(\beta_i = 0\)\\
+\(H_A\) parametr \(\beta_i \neq 0\) Parametr \(\beta_i\) s největší
+P-hodnotou jsem odstranil, protože označuje koeficient, který není pro
+můj příklad statisticky signifikantní. Nikdy jsem ale neodtstanil
+konstantu \(\beta_1\), i když měla největší P-hodnotu. Nastal-li tento
+případ, odstranil jsem parametr s druhou největší hodnotou.\\
+Po každém odstranění nějakého parametru jsem model přepočítal. Takto
+jsem opakoval, dokud nezbyly statisticky významné koeficienty
+(\(P-hodnota \leq \alpha\)) a konstanta \(\beta_1\)
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{77}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{x} \PY{o}{=} \PY{p}{(}\PY{n}{df2}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{to\PYZus{}numpy}\PY{p}{(}\PY{p}{)}
+\PY{n}{y} \PY{o}{=} \PY{p}{(}\PY{n}{df2}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{to\PYZus{}numpy}\PY{p}{(}\PY{p}{)}
+\PY{n}{z} \PY{o}{=} \PY{p}{(}\PY{n}{df2}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{to\PYZus{}numpy}\PY{p}{(}\PY{p}{)}
+
+\PY{n}{xx} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{n}{yy} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{n}{zz} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+
+\PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n}{x}\PY{p}{:}
+    \PY{n}{j} \PY{o}{=} \PY{n}{j}\PY{o}{.}\PY{n}{replace}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{,}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{xx}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n+nb}{float}\PY{p}{(}\PY{n}{j}\PY{p}{)}\PY{p}{)}
+
+\PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n}{y}\PY{p}{:}
+    \PY{n}{j} \PY{o}{=} \PY{n}{j}\PY{o}{.}\PY{n}{replace}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{,}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{yy}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n+nb}{float}\PY{p}{(}\PY{n}{j}\PY{p}{)}\PY{p}{)}
+
+\PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n}{z}\PY{p}{:}
+    \PY{n}{j} \PY{o}{=} \PY{n}{j}\PY{o}{.}\PY{n}{replace}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{,}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{zz}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n+nb}{float}\PY{p}{(}\PY{n}{j}\PY{p}{)}\PY{p}{)}
+
+\PY{n}{x} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{xx}\PY{p}{)}
+\PY{n}{y} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{yy}\PY{p}{)}
+\PY{n}{z} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{zz}\PY{p}{)}
+
+\PY{k}{def} \PY{n+nf}{calcModel}\PY{p}{(}\PY{n}{F}\PY{p}{,} \PY{n}{print\PYZus{}summary}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,} \PY{n}{useConstant}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}\PY{p}{:}
+    \PY{k}{if} \PY{n}{useConstant}\PY{p}{:}
+        \PY{n}{F} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{add\PYZus{}constant}\PY{p}{(}\PY{n}{F}\PY{p}{)}
+
+    \PY{n}{model} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{z}\PY{p}{,} \PY{n}{F}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+    \PY{k}{if} \PY{n}{print\PYZus{}summary}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{n}{model}\PY{o}{.}\PY{n}{summary}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+    \PY{k}{else}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{n}{model}\PY{o}{.}\PY{n}{rsquared}\PY{p}{)}
+    \PY{k}{return} \PY{n}{model}
+
+\PY{n}{F} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{column\PYZus{}stack}\PY{p}{(}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{x}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2}\PY{p}{,} \PY{n}{y}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2}\PY{p}{,} \PY{n}{x}\PY{o}{*}\PY{n}{y}\PY{p}{)}\PY{p}{)}
+\PY{n}{model} \PY{o}{=} \PY{n}{calcModel}\PY{p}{(}\PY{n}{F}\PY{p}{,} \PY{k+kc}{True}\PY{p}{,} \PY{k+kc}{True}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+                            OLS Regression Results
+==============================================================================
+Dep. Variable:                      y   R-squared:                       0.999
+Model:                            OLS   Adj. R-squared:                  0.999
+Method:                 Least Squares   F-statistic:                 1.036e+04
+Date:                Sun, 04 Dec 2022   Prob (F-statistic):           1.21e-91
+Time:                        15:16:08   Log-Likelihood:                -335.87
+No. Observations:                  70   AIC:                             683.7
+Df Residuals:                      64   BIC:                             697.2
+Df Model:                           5
+Covariance Type:            nonrobust
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const          0.7385     14.691      0.050      0.960     -28.610      30.087
+x1             1.0324      2.292      0.450      0.654      -3.546       5.611
+x2             4.3030      4.327      0.994      0.324      -4.342      12.948
+x3             4.0399      0.102     39.524      0.000       3.836       4.244
+x4             4.8417      0.381     12.697      0.000       4.080       5.603
+x5             6.0869      0.172     35.303      0.000       5.742       6.431
+==============================================================================
+Omnibus:                        0.829   Durbin-Watson:                   1.954
+Prob(Omnibus):                  0.661   Jarque-Bera (JB):                0.824
+Skew:                           0.019   Prob(JB):                        0.662
+Kurtosis:                       2.470   Cond. No.                         839.
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly
+specified.
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{78}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{F} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{column\PYZus{}stack}\PY{p}{(}\PY{p}{(}\PY{n}{y}\PY{p}{,} \PY{n}{x}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2}\PY{p}{,} \PY{n}{y}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2}\PY{p}{,} \PY{n}{x}\PY{o}{*}\PY{n}{y}\PY{p}{)}\PY{p}{)}
+\PY{n}{model} \PY{o}{=} \PY{n}{calcModel}\PY{p}{(}\PY{n}{F}\PY{p}{,} \PY{k+kc}{True}\PY{p}{,} \PY{k+kc}{True}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+                            OLS Regression Results
+==============================================================================
+Dep. Variable:                      y   R-squared:                       0.999
+Model:                            OLS   Adj. R-squared:                  0.999
+Method:                 Least Squares   F-statistic:                 1.311e+04
+Date:                Sun, 04 Dec 2022   Prob (F-statistic):           1.10e-93
+Time:                        15:16:08   Log-Likelihood:                -335.98
+No. Observations:                  70   AIC:                             682.0
+Df Residuals:                      65   BIC:                             693.2
+Df Model:                           4
+Covariance Type:            nonrobust
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const          5.2817     10.616      0.498      0.621     -15.921      26.484
+x1             4.0109      4.252      0.943      0.349      -4.481      12.503
+x2             4.0810      0.046     88.867      0.000       3.989       4.173
+x3             4.8417      0.379     12.775      0.000       4.085       5.599
+x4             6.1161      0.159     38.521      0.000       5.799       6.433
+==============================================================================
+Omnibus:                        0.719   Durbin-Watson:                   1.945
+Prob(Omnibus):                  0.698   Jarque-Bera (JB):                0.768
+Skew:                           0.045   Prob(JB):                        0.681
+Kurtosis:                       2.495   Cond. No.                         623.
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly
+specified.
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{79}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{F} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{column\PYZus{}stack}\PY{p}{(}\PY{p}{(}\PY{n}{x}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2}\PY{p}{,} \PY{n}{y}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2}\PY{p}{,} \PY{n}{x}\PY{o}{*}\PY{n}{y}\PY{p}{)}\PY{p}{)}
+\PY{n}{model} \PY{o}{=} \PY{n}{calcModel}\PY{p}{(}\PY{n}{F}\PY{p}{,} \PY{k+kc}{True}\PY{p}{,} \PY{k+kc}{True}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+                            OLS Regression Results
+==============================================================================
+Dep. Variable:                      y   R-squared:                       0.999
+Model:                            OLS   Adj. R-squared:                  0.999
+Method:                 Least Squares   F-statistic:                 1.751e+04
+Date:                Sun, 04 Dec 2022   Prob (F-statistic):           1.18e-95
+Time:                        15:16:09   Log-Likelihood:                -336.46
+No. Observations:                  70   AIC:                             680.9
+Df Residuals:                      66   BIC:                             689.9
+Df Model:                           3
+Covariance Type:            nonrobust
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const         12.8588      6.935      1.854      0.068      -0.988      26.706
+x1             4.0681      0.044     92.912      0.000       3.981       4.155
+x2             5.1603      0.172     30.054      0.000       4.817       5.503
+x3             6.1720      0.147     41.939      0.000       5.878       6.466
+==============================================================================
+Omnibus:                        1.262   Durbin-Watson:                   1.931
+Prob(Omnibus):                  0.532   Jarque-Bera (JB):                1.218
+Skew:                           0.194   Prob(JB):                        0.544
+Kurtosis:                       2.484   Cond. No.                         389.
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly
+specified.
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{80}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{F} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{column\PYZus{}stack}\PY{p}{(}\PY{p}{(}\PY{n}{x}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2}\PY{p}{,} \PY{n}{y}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2}\PY{p}{,} \PY{n}{x}\PY{o}{*}\PY{n}{y}\PY{p}{)}\PY{p}{)}
+\PY{n}{model} \PY{o}{=} \PY{n}{calcModel}\PY{p}{(}\PY{n}{F}\PY{p}{,} \PY{k+kc}{True}\PY{p}{,} \PY{k+kc}{True}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+                            OLS Regression Results
+==============================================================================
+Dep. Variable:                      y   R-squared:                       0.999
+Model:                            OLS   Adj. R-squared:                  0.999
+Method:                 Least Squares   F-statistic:                 1.751e+04
+Date:                Sun, 04 Dec 2022   Prob (F-statistic):           1.18e-95
+Time:                        15:16:09   Log-Likelihood:                -336.46
+No. Observations:                  70   AIC:                             680.9
+Df Residuals:                      66   BIC:                             689.9
+Df Model:                           3
+Covariance Type:            nonrobust
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const         12.8588      6.935      1.854      0.068      -0.988      26.706
+x1             4.0681      0.044     92.912      0.000       3.981       4.155
+x2             5.1603      0.172     30.054      0.000       4.817       5.503
+x3             6.1720      0.147     41.939      0.000       5.878       6.466
+==============================================================================
+Omnibus:                        1.262   Durbin-Watson:                   1.931
+Prob(Omnibus):                  0.532   Jarque-Bera (JB):                1.218
+Skew:                           0.194   Prob(JB):                        0.544
+Kurtosis:                       2.484   Cond. No.                         389.
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly
+specified.
+    \end{Verbatim}
+
+    Po opakovaném výpoču modelu a odstraňování nevýznamných parametrlů jsem
+získal model:
+
+\[ Z = \beta_1 + \beta_2X^2 + \beta_3Y^2 + \beta_4XY \] \[ \equiv \]
+\[ z = 12.8588 + 4.0681x^2 + 5.1603y^2 + 6.1720xy \]
+
+Výsledný regresní model vykreslíme:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{81}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{fig} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{p}{)}
+\PY{n}{ax} \PY{o}{=} \PY{n}{fig}\PY{o}{.}\PY{n}{add\PYZus{}subplot}\PY{p}{(}\PY{l+m+mi}{111}\PY{p}{,} \PY{n}{projection}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{3d}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{ax}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{z}\PY{p}{,} \PY{n}{marker}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{red}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{x}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{y}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}zlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{z}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n}{beta1} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+\PY{n}{beta2} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}
+\PY{n}{beta3} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}
+\PY{n}{beta4} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+m+mi}{3}\PY{p}{]}
+
+\PY{n}{z\PYZus{}line} \PY{o}{=} \PY{n}{beta2} \PY{o}{*} \PY{n}{x}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2} \PY{o}{+} \PY{n}{beta3} \PY{o}{*} \PY{n}{y}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2} \PY{o}{+} \PY{n}{beta4} \PY{o}{*} \PY{n}{x}\PY{o}{*}\PY{n}{y} \PY{o}{+} \PY{n}{beta1}
+
+\PY{n}{surf} \PY{o}{=} \PY{n}{ax}\PY{o}{.}\PY{n}{plot\PYZus{}trisurf}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{z\PYZus{}line}\PY{p}{,}  \PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{0.5}\PY{p}{,} \PY{n}{linewidth}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{antialiased}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{xzbori20_files/xzbori20_68_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{82}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{fig} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{p}{)}
+\PY{n}{ax} \PY{o}{=} \PY{n}{fig}\PY{o}{.}\PY{n}{add\PYZus{}subplot}\PY{p}{(}\PY{l+m+mi}{111}\PY{p}{,} \PY{n}{projection}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{3d}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{ax}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{z}\PY{p}{,} \PY{n}{marker}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{red}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{x}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{y}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}zlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{z}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n}{surf} \PY{o}{=} \PY{n}{ax}\PY{o}{.}\PY{n}{plot\PYZus{}trisurf}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{z\PYZus{}line}\PY{p}{,}  \PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{0.5}\PY{p}{,} \PY{n}{linewidth}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{antialiased}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{ax}\PY{o}{.}\PY{n}{view\PYZus{}init}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{)}
+
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{xzbori20_files/xzbori20_69_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{83}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{fig} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{p}{)}
+\PY{n}{ax} \PY{o}{=} \PY{n}{fig}\PY{o}{.}\PY{n}{add\PYZus{}subplot}\PY{p}{(}\PY{l+m+mi}{111}\PY{p}{,} \PY{n}{projection}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{3d}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{ax}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{z}\PY{p}{,} \PY{n}{marker}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{red}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{x}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{y}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}zlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{z}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n}{surf} \PY{o}{=} \PY{n}{ax}\PY{o}{.}\PY{n}{plot\PYZus{}trisurf}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{z\PYZus{}line}\PY{p}{,}  \PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{0.5}\PY{p}{,} \PY{n}{linewidth}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{antialiased}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{ax}\PY{o}{.}\PY{n}{view\PYZus{}init}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{o}{\PYZhy{}}\PY{l+m+mi}{90}\PY{p}{)}
+
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{xzbori20_files/xzbori20_70_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \hypertarget{b-pro-takto-zuxedskanuxfd-model-dostateux10dnuxfd-submodel-uveux10fte-v-jednuxe9-tabulce-odhady-regresnuxedch-parametrux16f-metodou-nejmenux161uxedch-ux10dtvercux16f-a-jejich-95-intervaly-spolehlivosti.}{%
+\paragraph{b) Pro takto získaný model (dostatečný submodel) uveďte v
+jedné tabulce odhady regresních parametrů metodou nejmenších čtverců a
+jejich 95\% intervaly
+spolehlivosti.}\label{b-pro-takto-zuxedskanuxfd-model-dostateux10dnuxfd-submodel-uveux10fte-v-jednuxe9-tabulce-odhady-regresnuxedch-parametrux16f-metodou-nejmenux161uxedch-ux10dtvercux16f-a-jejich-95-intervaly-spolehlivosti.}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{84}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{df\PYZus{}param} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{model}\PY{o}{.}\PY{n}{params}\PY{p}{,} \PY{n}{columns}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{parametry}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\PY{n}{df\PYZus{}param}\PY{o}{.}\PY{n}{index} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{beta0}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{beta1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{beta2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{beta3}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\PY{n}{df\PYZus{}param}\PY{o}{.}\PY{n}{insert}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{interval L}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{model}\PY{o}{.}\PY{n}{conf\PYZus{}int}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+\PY{n}{df\PYZus{}param}\PY{o}{.}\PY{n}{insert}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{interval P}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{model}\PY{o}{.}\PY{n}{conf\PYZus{}int}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} print(df\PYZus{}param.to\PYZus{}markdown())}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Tabulka získaných koeficientů \(\beta\) modelu a jejich 95\% intervaly
+spolehlivosti:
+
+    \begin{longtable}[]{@{}lrrr@{}}
+\toprule
+& parametry & interval L & interval P \\
+\midrule
+\endhead
+\(\beta_1\) & 12.8588 & -0.987861 & 26.7055 \\
+\(\beta_2\) & 4.06806 & 3.98064 & 4.15548 \\
+\(\beta_3\) & 5.16028 & 4.81747 & 5.5031 \\
+\(\beta_4\) & 6.17201 & 5.87819 & 6.46584 \\
+\bottomrule
+\end{longtable}
+
+    \hypertarget{c-nestrannux11b-odhadnux11bte-rozptyl-zuxe1visle-promux11bnnuxe9.}{%
+\paragraph{c) Nestranně odhadněte rozptyl závisle
+proměnné.}\label{c-nestrannux11b-odhadnux11bte-rozptyl-zuxe1visle-promux11bnnuxe9.}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{85}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Rozptyl závislé proměnné Z = }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{model}\PY{o}{.}\PY{n}{mse\PYZus{}resid}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Rozptyl závislé proměnné Z =  928.8752852687966
+    \end{Verbatim}
+
+    \hypertarget{d-vhodnuxfdm-testem-zjistux11bte-ux17ee-vuxe1mi-zvolenuxe9-dva-regresnuxed-parametry-jsou-souux10dasnux11b-nulovuxe9.}{%
+\paragraph{d) Vhodným testem zjistěte, že vámi zvolené dva regresní
+parametry jsou současně
+nulové.}\label{d-vhodnuxfdm-testem-zjistux11bte-ux17ee-vuxe1mi-zvolenuxe9-dva-regresnuxed-parametry-jsou-souux10dasnux11b-nulovuxe9.}}
+
+Pro ověření hypotézy, že dva regresní parametry jsou současně nulové
+jsem využil jsem F-test (Fisherovo-Snedecorovo rozdělení).\\
+Vybrané parametry - \(\beta_2\) a \(\beta_3\)\\
+\(H_0:\) dva regresní parametry jsou současně nulové\\
+\(H_A:\) dva regresní parametry NEjsou současně nulové
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{86}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{f} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{f\PYZus{}test}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{x1=x2=0}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{p}{(}\PY{n}{f}\PY{p}{)}\PY{p}{)}
+
+\PY{k}{if}\PY{p}{(}\PY{n}{f}\PY{o}{.}\PY{n}{pvalue} \PY{o}{\PYZgt{}} \PY{l+m+mf}{0.05}\PY{p}{)}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{H0 nezamitame}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{k}{else}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{H0 zamitame}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+<F test: F=4912.283415242425, p=1.594596743515046e-72, df\_denom=66, df\_num=2>
+H0 zamitame
+    \end{Verbatim}
+
+    \hypertarget{e-vhodnuxfdm-testem-zjistux11bte-ux17ee-vuxe1mi-zvolenuxe9-dva-regresnuxed-parametry-jsou-stejnuxe9.}{%
+\paragraph{e) Vhodným testem zjistěte, že vámi zvolené dva regresní
+parametry jsou
+stejné.}\label{e-vhodnuxfdm-testem-zjistux11bte-ux17ee-vuxe1mi-zvolenuxe9-dva-regresnuxed-parametry-jsou-stejnuxe9.}}
+
+Vybrané parametry - \(\beta_3\) a \(\beta_4\)\\
+\(H_0:\) dva regresní parametry jsou stejné\\
+\(H_A:\) dva regresní parametry NEjsou stejné
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{87}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{model}\PY{o}{.}\PY{n}{f\PYZus{}test}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{x2 = x3}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\PY{k}{if}\PY{p}{(}\PY{n}{model}\PY{o}{.}\PY{n}{f\PYZus{}test}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{x2 = x3}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{o}{.}\PY{n}{pvalue} \PY{o}{\PYZgt{}} \PY{l+m+mf}{0.05}\PY{p}{)}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{H0 nezamitame}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{k}{else}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{H0 zamitame}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+<F test: F=11.233116388450709, p=0.0013330450705401292, df\_denom=66, df\_num=1>
+H0 zamitame
+    \end{Verbatim}
+
+    Výsledky tohoto testu jsou očekávané, protože \(\beta_3\) = 5.16028,
+interval = \textless4.81747 ; 5.5031\textgreater{} a \(\beta_4\) =
+6.17201 , interval = \textless5.87819 ; 6.46584\textgreater{}
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
